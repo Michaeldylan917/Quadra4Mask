@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 专注模式</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .focus-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            color: white;
+        }
+
+        .focus-header {
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .focus-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .focus-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .focus-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .focus-timer {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin-bottom: 40px;
+        }
+
+        .focus-timer-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .focus-timer-circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .focus-timer-bg {
+            stroke: rgba(255, 255, 255, 0.2);
+        }
+
+        .focus-timer-fill {
+            stroke: white;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .focus-timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .focus-timer-time {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1;
+            font-family: 'Menlo', monospace;
+        }
+
+        .focus-timer-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        .focus-task {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .focus-task-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .focus-task-time {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .focus-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .focus-btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .focus-btn-play {
+            background: white;
+            color: #007AFF;
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
+        }
+
+        .focus-btn-play:active {
+            transform: scale(0.95);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .focus-btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .focus-btn-secondary:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .focus-stats {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .focus-stats-title {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .focus-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .focus-stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .focus-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .focus-stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .focus-footer {
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .focus-footer-text {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .focus-footer-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 150ms ease-in-out;
+        }
+
+        .focus-footer-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .focus-mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .focus-mode-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .focus-mode-btn.active {
+            background: white;
+            color: #007AFF;
+            border-color: white;
+        }
+
+        .focus-mode-btn:active {
+            opacity: 0.8;
+        }
+
+        .session-history {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            backdrop-filter: blur(10px);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .session-history-title {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-time {
+            opacity: 0.8;
+        }
+
+        .session-duration {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar" style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); color: white;">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar" style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); color: white; border-bottom: none;">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">专注模式</div>
+                <div class="nav-bar-right">
+                    <i class="fas fa-cog"></i>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="focus-container">
+                <div class="focus-header">
+                    <div class="focus-title">番茄钟专注</div>
+                    <div class="focus-subtitle">集中精力完成任务</div>
+                </div>
+
+                <div class="focus-content">
+                    <!-- 模式选择 -->
+                    <div class="focus-mode-selector">
+                        <button class="focus-mode-btn active" onclick="switchMode('pomodoro')">
+                            <i class="fas fa-hourglass-half"></i> 番茄钟
+                        </button>
+                        <button class="focus-mode-btn" onclick="switchMode('custom')">
+                            <i class="fas fa-clock"></i> 自定义
+                        </button>
+                    </div>
+
+                    <!-- 任务信息 -->
+                    <div class="focus-task">
+                        <div class="focus-task-title">完成项目提案</div>
+                        <div class="focus-task-time">预计 120 分钟</div>
+                    </div>
+
+                    <!-- 计时器 -->
+                    <div class="focus-timer">
+                        <svg class="focus-timer-svg" viewBox="0 0 100 100">
+                            <circle class="focus-timer-circle focus-timer-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="focus-timer-circle focus-timer-fill" cx="50" cy="50" r="45" style="stroke-dasharray: 282.7; stroke-dashoffset: 70.675;"></circle>
+                        </svg>
+                        <div class="focus-timer-text">
+                            <div class="focus-timer-time" id="timerDisplay">25:00</div>
+                            <div class="focus-timer-label">分钟</div>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="focus-buttons">
+                        <button class="focus-btn focus-btn-secondary" onclick="skipSession()">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button class="focus-btn focus-btn-play" id="playBtn" onclick="toggleTimer()">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="focus-btn focus-btn-secondary" onclick="resetTimer()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+
+                    <!-- 统计信息 -->
+                    <div class="focus-stats">
+                        <div class="focus-stats-title">今日统计</div>
+                        <div class="focus-stats-grid">
+                            <div class="focus-stat-item">
+                                <div class="focus-stat-value">3</div>
+                                <div class="focus-stat-label">完成番茄</div>
+                            </div>
+                            <div class="focus-stat-item">
+                                <div class="focus-stat-value">75min</div>
+                                <div class="focus-stat-label">专注时长</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 会话历史 -->
+                    <div class="session-history">
+                        <div class="session-history-title">会话记录</div>
+                        <div class="session-item">
+                            <span class="session-time">09:00 - 09:25</span>
+                            <span class="session-duration">✓ 25min</span>
+                        </div>
+                        <div class="session-item">
+                            <span class="session-time">09:30 - 09:55</span>
+                            <span class="session-duration">✓ 25min</span>
+                        </div>
+                        <div class="session-item">
+                            <span class="session-time">10:00 - 10:25</span>
+                            <span class="session-duration">✓ 25min</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="focus-footer">
+                    <div class="focus-footer-text">
+                        <i class="fas fa-info-circle"></i> 专注时请勿打扰
+                    </div>
+                    <button class="focus-footer-btn" onclick="endFocus()">
+                        <i class="fas fa-times"></i> 结束专注
+                    </button>
+                </div>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar" style="background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%); color: white; border-top: none;">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item active">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timeRemaining = 25 * 60; // 25分钟
+        let isRunning = false;
+        let timerInterval = null;
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            // 更新进度圆
+            const totalSeconds = 25 * 60;
+            const progress = (totalSeconds - timeRemaining) / totalSeconds;
+            const circumference = 282.7;
+            const offset = circumference * (1 - progress);
+            document.querySelector('.focus-timer-fill').style.strokeDashoffset = offset;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('playBtn');
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btn.innerHTML = '<i class="fas fa-play"></i>';
+                isRunning = false;
+            } else {
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    updateDisplay();
+                    
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        btn.innerHTML = '<i class="fas fa-play"></i>';
+                        completeSession();
+                    }
+                }, 1000);
+                btn.innerHTML = '<i class="fas fa-pause"></i>';
+                isRunning = true;
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeRemaining = 25 * 60;
+            document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+            updateDisplay();
+        }
+
+        function skipSession() {
+            resetTimer();
+            completeSession();
+        }
+
+        function completeSession() {
+            alert('🎉 完成一个番茄钟！\n\n建议休息5分钟后继续工作。');
+            resetTimer();
+        }
+
+        function switchMode(mode) {
+            const buttons = document.querySelectorAll('.focus-mode-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.focus-mode-btn').classList.add('active');
+            console.log('Switched to mode:', mode);
+        }
+
+        function endFocus() {
+            if (confirm('确定要结束专注模式吗？')) {
+                window.history.back();
+            }
+        }
+
+        // 初始化
+        window.addEventListener('load', () => {
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
+

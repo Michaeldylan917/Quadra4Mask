@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 统计分析</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .stats-header {
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            color: white;
+            padding: 20px 16px;
+            margin: -12px -12px 16px -12px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .stats-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stats-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stats-period-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .period-btn {
+            flex: 1;
+            height: 32px;
+            border: 1px solid #E5E5EA;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            color: #8E8E93;
+        }
+
+        .period-btn.active {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+
+        .period-btn:active {
+            opacity: 0.8;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .stat-card-title {
+            font-size: 13px;
+            color: #8E8E93;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #007AFF;
+            margin-bottom: 4px;
+        }
+
+        .stat-card-unit {
+            font-size: 12px;
+            color: #8E8E93;
+        }
+
+        .stat-card-change {
+            font-size: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #F2F2F7;
+        }
+
+        .stat-card-change.up {
+            color: #34C759;
+        }
+
+        .stat-card-change.down {
+            color: #FF3B30;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 12px;
+        }
+
+        .pie-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .pie-chart-svg {
+            width: 160px;
+            height: 160px;
+        }
+
+        .pie-chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pie-chart-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .pie-chart-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .pie-chart-legend-color.urgent-important {
+            background: #FF3B30;
+        }
+
+        .pie-chart-legend-color.not-urgent-important {
+            background: #FF9500;
+        }
+
+        .pie-chart-legend-color.urgent-not-important {
+            background: #34C759;
+        }
+
+        .pie-chart-legend-color.not-urgent-not-important {
+            background: #A2845E;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 150px;
+            gap: 8px;
+            padding: 16px 0;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #007AFF 0%, #0051D5 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 150ms ease-in-out;
+            min-height: 4px;
+        }
+
+        .bar:active {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #8E8E93;
+            text-align: center;
+        }
+
+        .bar-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #007AFF;
+        }
+
+        .line-chart {
+            position: relative;
+            height: 200px;
+            margin: 16px 0;
+        }
+
+        .line-chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2F2F7;
+        }
+
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+
+        .trend-label {
+            font-size: 13px;
+            color: #000;
+            font-weight: 500;
+        }
+
+        .trend-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #007AFF;
+        }
+
+        .trend-change {
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .trend-change.up {
+            color: #34C759;
+        }
+
+        .trend-change.down {
+            color: #FF3B30;
+        }
+
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2F2F7;
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-label {
+            font-size: 13px;
+            color: #8E8E93;
+        }
+
+        .comparison-bars {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex: 1;
+            margin: 0 12px;
+        }
+
+        .comparison-bar {
+            height: 6px;
+            background: #E5E5EA;
+            border-radius: 3px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .comparison-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007AFF 0%, #0051D5 100%);
+        }
+
+        .comparison-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .empty-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: #8E8E93;
+        }
+
+        .empty-stats-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-stats-text {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">统计分析</div>
+                <div class="nav-bar-right">
+                    <i class="fas fa-download"></i>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 统计头部 -->
+                <div class="stats-header">
+                    <div class="stats-title">数据统计</div>
+                    <div class="stats-subtitle">2025年12月3日</div>
+                </div>
+
+                <!-- 时间段选择 -->
+                <div class="stats-period-selector">
+                    <button class="period-btn active" onclick="switchPeriod('day')">今天</button>
+                    <button class="period-btn" onclick="switchPeriod('week')">本周</button>
+                    <button class="period-btn" onclick="switchPeriod('month')">本月</button>
+                </div>
+
+                <!-- 关键指标 -->
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-title">完成率</div>
+                        <div class="stat-card-value">75%</div>
+                        <div class="stat-card-unit">3/4 任务</div>
+                        <div class="stat-card-change up">
+                            <i class="fas fa-arrow-up"></i> 比昨天 +15%
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-title">专注时长</div>
+                        <div class="stat-card-value">2h</div>
+                        <div class="stat-card-unit">120 分钟</div>
+                        <div class="stat-card-change up">
+                            <i class="fas fa-arrow-up"></i> 比昨天 +30min
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-title">待处理</div>
+                        <div class="stat-card-value">1</div>
+                        <div class="stat-card-unit">个任务</div>
+                        <div class="stat-card-change down">
+                            <i class="fas fa-arrow-down"></i> 比昨天 -2
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-title">平均用时</div>
+                        <div class="stat-card-value">40</div>
+                        <div class="stat-card-unit">分钟/任务</div>
+                        <div class="stat-card-change down">
+                            <i class="fas fa-arrow-down"></i> 比昨天 -10min
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 象限分布 -->
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-pie-chart"></i> 象限分布
+                    </div>
+                    <div class="pie-chart">
+                        <svg class="pie-chart-svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#FF3B30" stroke-width="20" stroke-dasharray="62.8 251.2" transform="rotate(-90 50 50)"></circle>
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#FF9500" stroke-width="20" stroke-dasharray="62.8 251.2" stroke-dashoffset="-62.8" transform="rotate(-90 50 50)"></circle>
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#34C759" stroke-width="20" stroke-dasharray="62.8 251.2" stroke-dashoffset="-125.6" transform="rotate(-90 50 50)"></circle>
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#A2845E" stroke-width="20" stroke-dasharray="62.8 251.2" stroke-dashoffset="-188.4" transform="rotate(-90 50 50)"></circle>
+                        </svg>
+                    </div>
+                    <div class="pie-chart-legend">
+                        <div class="pie-chart-legend-item">
+                            <div class="pie-chart-legend-color urgent-important"></div>
+                            <span>重要&紧急: 1个</span>
+                        </div>
+                        <div class="pie-chart-legend-item">
+                            <div class="pie-chart-legend-color not-urgent-important"></div>
+                            <span>重要&不紧急: 1个</span>
+                        </div>
+                        <div class="pie-chart-legend-item">
+                            <div class="pie-chart-legend-color urgent-not-important"></div>
+                            <span>不重要&紧急: 1个</span>
+                        </div>
+                        <div class="pie-chart-legend-item">
+                            <div class="pie-chart-legend-color not-urgent-not-important"></div>
+                            <span>不重要&不紧急: 1个</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 周趋势 -->
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line"></i> 周趋势
+                    </div>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 60%;"></div>
+                            <div class="bar-label">周一</div>
+                            <div class="bar-value">3</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 80%;"></div>
+                            <div class="bar-label">周二</div>
+                            <div class="bar-value">4</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 100%;"></div>
+                            <div class="bar-label">周三</div>
+                            <div class="bar-value">5</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 70%;"></div>
+                            <div class="bar-label">周四</div>
+                            <div class="bar-value">3</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 90%;"></div>
+                            <div class="bar-label">周五</div>
+                            <div class="bar-value">4</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 40%;"></div>
+                            <div class="bar-label">周六</div>
+                            <div class="bar-value">2</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 50%;"></div>
+                            <div class="bar-label">周日</div>
+                            <div class="bar-value">2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 完成趋势 -->
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-check-circle"></i> 完成趋势
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">今天</span>
+                        <div>
+                            <span class="trend-value">75%</span>
+                            <span class="trend-change up"><i class="fas fa-arrow-up"></i> +15%</span>
+                        </div>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">昨天</span>
+                        <div>
+                            <span class="trend-value">60%</span>
+                            <span class="trend-change down"><i class="fas fa-arrow-down"></i> -5%</span>
+                        </div>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">本周平均</span>
+                        <div>
+                            <span class="trend-value">68%</span>
+                            <span class="trend-change up"><i class="fas fa-arrow-up"></i> +8%</span>
+                        </div>
+                    </div>
+                    <div class="trend-item">
+                        <span class="trend-label">本月平均</span>
+                        <div>
+                            <span class="trend-value">65%</span>
+                            <span class="trend-change up"><i class="fas fa-arrow-up"></i> +3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 象限对比 -->
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fas fa-balance-scale"></i> 象限对比
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">重要&紧急</span>
+                        <div class="comparison-bars">
+                            <div class="comparison-bar">
+                                <div class="comparison-bar-fill" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <span class="comparison-value">100%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">重要&不紧急</span>
+                        <div class="comparison-bars">
+                            <div class="comparison-bar">
+                                <div class="comparison-bar-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        <span class="comparison-value">75%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">不重要&紧急</span>
+                        <div class="comparison-bars">
+                            <div class="comparison-bar">
+                                <div class="comparison-bar-fill" style="width: 50%;"></div>
+                            </div>
+                        </div>
+                        <span class="comparison-value">50%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">不重要&不紧急</span>
+                        <div class="comparison-bars">
+                            <div class="comparison-bar">
+                                <div class="comparison-bar-fill" style="width: 25%;"></div>
+                            </div>
+                        </div>
+                        <span class="comparison-value">25%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item active">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchPeriod(period) {
+            const buttons = document.querySelectorAll('.period-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            console.log('Switched to period:', period);
+        }
+    </script>
+</body>
+</html>
+

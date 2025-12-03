@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 启动页</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .splash-container {
+            width: 390px;
+            height: 844px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .splash-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 24px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .splash-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .splash-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .splash-privacy {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 40px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .splash-privacy-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .splash-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            padding: 0 20px 40px;
+        }
+
+        .splash-btn {
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .splash-btn-primary {
+            background: white;
+            color: #007AFF;
+        }
+
+        .splash-btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .splash-btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .splash-btn-secondary:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i class="fas fa-th"></i>
+            </div>
+            <h1 class="splash-title">QuadTask</h1>
+            <p class="splash-subtitle">四象限任务管理</p>
+            
+            <div class="splash-privacy">
+                <div class="splash-privacy-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <p>✓ 完全本地存储，无需登录</p>
+                <p>✓ 您的数据完全属于您</p>
+                <p>✓ 离线即可使用所有功能</p>
+            </div>
+
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        </div>
+
+        <div class="splash-buttons">
+            <button class="splash-btn splash-btn-primary" onclick="goToPrivacy()">
+                <i class="fas fa-arrow-right mr-2"></i> 立即开始
+            </button>
+            <button class="splash-btn splash-btn-secondary" onclick="skipToHome()">
+                跳过 <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function goToPrivacy() {
+            // 在实际应用中，这会导航到隐私页面
+            window.location.hash = '#privacy';
+            console.log('Navigate to privacy page');
+        }
+
+        function skipToHome() {
+            // 在实际应用中，这会导航到主页
+            window.location.hash = '#home';
+            console.log('Navigate to home page');
+        }
+
+        // 模拟启动动画
+        window.addEventListener('load', () => {
+            console.log('Splash screen loaded');
+        });
+    </script>
+</body>
+</html>
+

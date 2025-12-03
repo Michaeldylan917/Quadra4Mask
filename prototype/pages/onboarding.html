@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 新手引导</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .onboarding-container {
+            width: 390px;
+            height: 844px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .onboarding-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .onboarding-carousel {
+            flex: 1;
+            display: flex;
+            transition: transform 300ms ease-in-out;
+            overflow: hidden;
+        }
+
+        .onboarding-slide {
+            flex: 0 0 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .onboarding-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .onboarding-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+        }
+
+        .onboarding-desc {
+            font-size: 16px;
+            color: #8E8E93;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .onboarding-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+        }
+
+        .onboarding-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #E5E5EA;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .onboarding-dot.active {
+            background: #007AFF;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .onboarding-buttons {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .onboarding-btn {
+            flex: 1;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+        }
+
+        .onboarding-btn-secondary {
+            background: #F2F2F7;
+            color: #000;
+        }
+
+        .onboarding-btn-secondary:active {
+            background: #E5E5EA;
+        }
+
+        .onboarding-btn-primary {
+            background: #007AFF;
+            color: white;
+        }
+
+        .onboarding-btn-primary:active {
+            background: #0051D5;
+        }
+
+        .slide-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .feature-list {
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2F2F7;
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.blue {
+            background: #E8F4FF;
+            color: #007AFF;
+        }
+
+        .feature-icon.green {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .feature-icon.orange {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: #8E8E93;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <div class="onboarding-screen">
+            <!-- 轮播内容 -->
+            <div class="onboarding-carousel" id="carousel">
+                <!-- 第1步：四象限概念 -->
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">📊</div>
+                    <h2 class="onboarding-title">四象限法则</h2>
+                    <p class="onboarding-desc">根据任务的重要性和紧急性，将任务分为四个象限</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon blue">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">重要&紧急</div>
+                                <div class="feature-desc">立即处理</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon orange">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">重要&不紧急</div>
+                                <div class="feature-desc">计划处理</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">不重要&紧急</div>
+                                <div class="feature-desc">委派处理</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第2步：快速添加 -->
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">⚡</div>
+                    <h2 class="onboarding-title">快速添加任务</h2>
+                    <p class="onboarding-desc">点击右下角的"+"按钮，1-2秒内创建新任务</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon blue">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">点击FAB按钮</div>
+                                <div class="feature-desc">打开快速添加面板</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon orange">
+                                <i class="fas fa-keyboard"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">输入任务标题</div>
+                                <div class="feature-desc">支持快速输入</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">确认创建</div>
+                                <div class="feature-desc">任务自动分类</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第3步：专注模式 -->
+                <div class="onboarding-slide">
+                    <div class="on[object Object]</div>
+                    <h2 class="onboarding-title">专注模式</h2>
+                    <p class="onboarding-desc">使用番茄钟技术提高工作效率</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon blue">
+                                <i class="fas fa-hourglass"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">番茄钟</div>
+                                <div class="feature-desc">25分钟专注工作</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon orange">
+                                <i class="fas fa-bell-slash"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">自动勿扰</div>
+                                <div class="feature-desc">减少干扰</div>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="feature-text">
+                                <div class="feature-title">统计追踪</div>
+                                <div class="feature-desc">查看专注时长</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 进度指示器 -->
+            <div class="onboarding-dots">
+                <div class="onboarding-dot active" onclick="goToSlide(0)"></div>
+                <div class="onboarding-dot" onclick="goToSlide(1)"></div>
+                <div class="onboarding-dot" onclick="goToSlide(2)"></div>
+            </div>
+
+            <!-- 按钮 -->
+            <div class="onboarding-buttons">
+                <button class="onboarding-btn onboarding-btn-secondary" onclick="prevSlide()">
+                    <i class="fas fa-chevron-left"></i> 上一步
+                </button>
+                <button class="onboarding-btn onboarding-btn-primary" id="nextBtn" onclick="nextSlide()">
+                    下一步 <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateCarousel();
+            } else {
+                // 完成引导
+                localStorage.setItem('onboarding_completed', 'true');
+                window.location.hash = '#home';
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateCarousel();
+            }
+        }
+
+        function updateCarousel() {
+            const carousel = document.getElementById('carousel');
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // 更新进度点
+            const dots = document.querySelectorAll('.onboarding-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            // 更新按钮文本
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.innerHTML = '开始使用 <i class="fas fa-arrow-right"></i>';
+            } else {
+                nextBtn.innerHTML = '下一步 <i class="fas fa-chevron-right"></i>';
+            }
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+    </script>
+</body>
+</html>
+

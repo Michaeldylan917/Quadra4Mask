@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 帮助中心</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .help-search {
+            display: flex;
+            align-items: center;
+            background: #F2F2F7;
+            border-radius: 8px;
+            padding: 0 12px;
+            margin-bottom: 16px;
+            height: 36px;
+        }
+
+        .help-search input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .help-search input::placeholder {
+            color: #C7C7CC;
+        }
+
+        .help-search-icon {
+            color: #8E8E93;
+            font-size: 14px;
+        }
+
+        .help-category {
+            margin-bottom: 20px;
+        }
+
+        .help-category-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-category-icon {
+            font-size: 18px;
+            color: #007AFF;
+        }
+
+        .help-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            border-left: 4px solid #E5E5EA;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-item:active {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .help-item.featured {
+            border-left-color: #007AFF;
+            background: #E8F4FF;
+        }
+
+        .help-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .help-item-desc {
+            font-size: 12px;
+            color: #8E8E93;
+            line-height: 1.4;
+        }
+
+        .help-item-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #F2F2F7;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #8E8E93;
+            margin-top: 8px;
+        }
+
+        .help-faq {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .help-faq-item {
+            border-bottom: 1px solid #F2F2F7;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .help-faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .help-faq-item.expanded {
+            background: #F2F2F7;
+        }
+
+        .help-faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            font-weight: 600;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .help-faq-icon {
+            font-size: 16px;
+            color: #8E8E93;
+            transition: transform 300ms ease-in-out;
+        }
+
+        .help-faq-item.expanded .help-faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .help-faq-answer {
+            display: none;
+            padding: 0 16px 16px 16px;
+            font-size: 13px;
+            color: #3C3C43;
+            line-height: 1.6;
+        }
+
+        .help-faq-item.expanded .help-faq-answer {
+            display: block;
+        }
+
+        .help-contact {
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .help-contact-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .help-contact-desc {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .help-contact-btn {
+            background: white;
+            color: #007AFF;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .help-contact-btn:active {
+            opacity: 0.8;
+        }
+
+        .help-tips {
+            background: rgba(52, 199, 89, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            border-left: 4px solid #34C759;
+            margin-bottom: 16px;
+        }
+
+        .help-tips-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #34C759;
+            margin-bottom: 8px;
+        }
+
+        .help-tips-content {
+            font-size: 12px;
+            color: #2D7A3D;
+            line-height: 1.6;
+        }
+
+        .help-tips-list {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .help-tips-list li {
+            margin-bottom: 4px;
+        }
+
+        .help-video {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .help-video:active {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .help-video-thumbnail {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .help-video-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .help-video-duration {
+            font-size: 12px;
+            color: #8E8E93;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">帮助中心</div>
+                <div class="nav-bar-right"></div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 搜索栏 -->
+                <div class="help-search">
+                    <i class="help-search-icon fas fa-search"></i>
+                    <input type="text" placeholder="搜索帮助...">
+                </div>
+
+                <!-- 快速开始 -->
+                <div class="help-category">
+                    <div class="help-category-title">
+                        <i class="help-category-icon fas fa-rocket"></i> 快速开始
+                    </div>
+                    <div class="help-item featured" onclick="openHelp('getting-started')">
+                        <div class="help-item-title">🚀 开始使用 QuadTask</div>
+                        <div class="help-item-desc">了解如何创建第一个任务和使用基本功能</div>
+                        <span class="help-item-tag">初学者</span>
+                    </div>
+                    <div class="help-item" onclick="openHelp('quadrant')">
+                        <div class="help-item-title">📊 理解四象限法则</div>
+                        <div class="help-item-desc">学习如何使用四象限矩阵优化任务管理</div>
+                        <span class="help-item-tag">基础</span>
+                    </div>
+                </div>
+
+                <!-- 常见问题 -->
+                <div class="help-category">
+                    <div class="help-category-title">
+                        <i class="help-category-icon fas fa-question-circle"></i> 常见问题
+                    </div>
+                    <div class="help-faq">
+                        <div class="help-faq-item" onclick="toggleFaq(this)">
+                            <div class="help-faq-question">
+                                <span>如何快速添加任务？</span>
+                                <i class="help-faq-icon fas fa-chevron-down"></i>
+                            </div>
+                            <div class="help-faq-answer">
+                                点击主屏幕右下角的"+"按钮，输入任务标题，选择象限，设置截止日期即可。通常只需1-2秒就能创建一个任务。
+                            </div>
+                        </div>
+                        <div class="help-faq-item" onclick="toggleFaq(this)">
+                            <div class="help-faq-question">
+                                <span>如何使用专注模式？</span>
+                                <i class="help-faq-icon fas fa-chevron-down"></i>
+                            </div>
+                            <div class="help-faq-answer">
+                                在任务详情页点击"开始专注"按钮，选择番茄钟时长（默认25分钟），点击播放按钮开始计时。专注期间会自动启用勿扰模式。
+                            </div>
+                        </div>
+                        <div class="help-faq-item" onclick="toggleFaq(this)">
+                            <div class="help-faq-question">
+                                <span>我的数据会上传到云端吗？</span>
+                                <i class="help-faq-icon fas fa-chevron-down"></i>
+                            </div>
+                            <div class="help-faq-answer">
+                                不会。QuadTask 完全离线运行，所有数据都存储在您的设备本地。我们不收集任何个人信息，您的隐私完全受保护。
+                            </div>
+                        </div>
+                        <div class="help-faq-item" onclick="toggleFaq(this)">
+                            <div class="help-faq-question">
+                                <span>如何备份和恢复数据？</span>
+                                <i class="help-faq-icon fas fa-chevron-down"></i>
+                            </div>
+                            <div class="help-faq-answer">
+                                在设置页面，点击"导出数据"可以将所有任务导出为 JSON 文件。需要恢复时，点击"导入数据"选择备份文件即可。
+                            </div>
+                        </div>
+                        <div class="help-faq-item" onclick="toggleFaq(this)">
+                            <div class="help-faq-question">
+                                <span>如何修改已创建的任务？</span>
+                                <i class="help-faq-icon fas fa-chevron-down"></i>
+                            </div>
+                            <div class="help-faq-answer">
+                                点击任务卡片打开详情页，点击"编辑"按钮可以修改任务的所有信息，包括标题、描述、象限、截止日期等。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能指南 -->
+                <div class="help-category">
+                    <div class="help-category-title">
+                        <i class="help-category-icon fas fa-book"></i> 功能指南
+                    </div>
+                    <div class="help-item" onclick="openHelp('views')">
+                        <div class="help-item-title">👁️ 多视图查看</div>
+                        <div class="help-item-desc">学习如何使用矩阵、日历、时间线等不同视图</div>
+                    </div>
+                    <div class="help-item" onclick="openHelp('stats')">
+                        <div class="help-item-title">📈 数据统计</div>
+                        <div class="help-item-desc">了解如何查看和分析您的任务完成情况</div>
+                    </div>
+                    <div class="help-item" onclick="openHelp('templates')">
+                        <div class="help-item-title">📋 任务模板</div>
+                        <div class="help-item-desc">使用预设模板快速创建常见任务</div>
+                    </div>
+                </div>
+
+                <!-- 提示和技巧 -->
+                <div class="help-tips">
+                    <div class="help-tips-title">💡 提示和技巧</div>
+                    <div class="help-tips-content">
+                        <ul class="help-tips-list">
+                            <li>使用标签为任务分类，便于搜索和筛选</li>
+                            <li>定期查看统计数据，了解自己的工作效率</li>
+                            <li>利用专注模式提高工作效率，避免分心</li>
+                            <li>定期导出数据作为备份，保护您的信息</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 联系我们 -->
+                <div class="help-contact">
+                    <div class="help-contact-title">需要帮助？</div>
+                    <div class="help-contact-desc">如果您有任何问题或建议，欢迎联系我们</div>
+                    <button class="help-contact-btn" onclick="contactSupport()">
+                        <i class="fas fa-envelope"></i> 联系支持
+                    </button>
+                </div>
+
+                <!-- 关于版本 -->
+                <div style="text-align: center; padding: 20px 16px; color: #8E8E93; font-size: 12px;">
+                    <div>QuadTask v1.0.0</div>
+                    <div style="margin-top: 4px;">© 2025 All Rights Reserved</div>
+                </div>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(element) {
+            element.classList.toggle('expanded');
+        }
+
+        function openHelp(topic) {
+            console.log('Open help topic:', topic);
+        }
+
+        function contactSupport() {
+            alert('📧 联系支持\n\n邮箱: support@quadtask.com\n\n感谢您的反馈！');
+        }
+    </script>
+</body>
+</html>
+

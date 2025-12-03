@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 设置</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #8E8E93;
+            padding: 0 16px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .settings-group {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid #F2F2F7;
+            cursor: pointer;
+            transition: background-color 150ms ease-in-out;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:active {
+            background-color: #F2F2F7;
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .settings-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .settings-item-icon.blue {
+            background: #E8F4FF;
+            color: #007AFF;
+        }
+
+        .settings-item-icon.green {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .settings-item-icon.orange {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .settings-item-icon.red {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        .settings-item-icon.purple {
+            background: rgba(175, 82, 222, 0.1);
+            color: #AF52DE;
+        }
+
+        .settings-item-content {
+            flex: 1;
+        }
+
+        .settings-item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .settings-item-desc {
+            font-size: 12px;
+            color: #8E8E93;
+            margin-top: 2px;
+        }
+
+        .settings-item-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-item-value {
+            font-size: 14px;
+            color: #8E8E93;
+            font-weight: 500;
+        }
+
+        .settings-toggle {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            background: #E5E5EA;
+            border-radius: 15.5px;
+            cursor: pointer;
+            transition: background-color 300ms ease-in-out;
+        }
+
+        .settings-toggle.active {
+            background: #34C759;
+        }
+
+        .settings-toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            transition: left 300ms ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-toggle.active .settings-toggle-thumb {
+            left: 22px;
+        }
+
+        .settings-arrow {
+            color: #C7C7CC;
+            font-size: 16px;
+        }
+
+        .settings-button {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            margin-bottom: 12px;
+        }
+
+        .settings-button-primary {
+            background: #007AFF;
+            color: white;
+        }
+
+        .settings-button-primary:active {
+            background: #0051D5;
+        }
+
+        .settings-button-danger {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        .settings-button-danger:active {
+            background: rgba(255, 59, 48, 0.2);
+        }
+
+        .settings-info {
+            background: #E8F4FF;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid #007AFF;
+        }
+
+        .settings-info-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 4px;
+        }
+
+        .settings-info-text {
+            font-size: 12px;
+            color: #0051D5;
+            line-height: 1.5;
+        }
+
+        .settings-version {
+            text-align: center;
+            padding: 20px 16px;
+            color: #8E8E93;
+            font-size: 12px;
+        }
+
+        .settings-version-number {
+            font-weight: 600;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">设置</div>
+                <div class="nav-bar-right"></div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 通知设置 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">通知</div>
+                    <div class="settings-group">
+                        <div class="settings-item" onclick="toggleSetting(this)">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon blue">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">任务提醒</div>
+                                    <div class="settings-item-desc">接收任务截止日期提醒</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <div class="settings-toggle active" onclick="event.stopPropagation()">
+                                    <div class="settings-toggle-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="toggleSetting(this)">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon green">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">专注提醒</div>
+                                    <div class="settings-item-desc">番茄钟完成时提醒</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <div class="settings-toggle active" onclick="event.stopPropagation()">
+                                    <div class="settings-toggle-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 显示设置 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">显示</div>
+                    <div class="settings-group">
+                        <div class="settings-item">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon orange">
+                                    <i class="fas fa-moon"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">深色模式</div>
+                                    <div class="settings-item-desc">跟随系统设置</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <div class="settings-toggle" onclick="event.stopPropagation()">
+                                    <div class="settings-toggle-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="openSettings('language')">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon purple">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">语言</div>
+                                    <div class="settings-item-desc">选择应用语言</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <span class="settings-item-value">中文</span>
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据管理 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">数据管理</div>
+                    <div class="settings-group">
+                        <div class="settings-item" onclick="exportData()">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon blue">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">导出数据</div>
+                                    <div class="settings-item-desc">导出为 JSON 文件</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="importData()">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon green">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">导入数据</div>
+                                    <div class="settings-item-desc">从 JSON 文件导入</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="backupData()">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon orange">
+                                    <i class="fas fa-save"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">自动备份</div>
+                                    <div class="settings-item-desc">每天自动备份数据</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <div class="settings-toggle active" onclick="event.stopPropagation()">
+                                    <div class="settings-toggle-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关于应用 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">关于</div>
+                    <div class="settings-group">
+                        <div class="settings-item" onclick="openSettings('about')">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon blue">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">关于 QuadTask</div>
+                                    <div class="settings-item-desc">应用信息和许可证</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="openSettings('privacy')">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon green">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">隐私政策</div>
+                                    <div class="settings-item-desc">查看隐私保护说明</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="settings-item" onclick="openSettings('help')">
+                            <div class="settings-item-left">
+                                <div class="settings-item-icon orange">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <div class="settings-item-content">
+                                    <div class="settings-item-title">帮助中心</div>
+                                    <div class="settings-item-desc">常见问题和使用指南</div>
+                                </div>
+                            </div>
+                            <div class="settings-item-right">
+                                <i class="settings-arrow fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 危险操作 -->
+                <div class="settings-section">
+                    <div class="settings-section-title">危险操作</div>
+                    <div class="settings-info">
+                        <div class="settings-info-title">⚠️ 警告</div>
+                        <div class="settings-info-text">以下操作无法撤销，请谨慎操作</div>
+                    </div>
+                    <div class="settings-group">
+                        <button class="settings-button settings-button-danger" onclick="clearAllData()" style="margin: 0; border-radius: 12px;">
+                            <i class="fas fa-trash"></i> 清空所有数据
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 版本信息 -->
+                <div class="settings-version">
+                    <div>QuadTask</div>
+                    <div>版本 <span class="settings-version-number">1.0.0</span></div>
+                    <div style="margin-top: 4px; font-size: 11px;">© 2025 All Rights Reserved</div>
+                </div>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item active">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSetting(element) {
+            const toggle = element.querySelector('.settings-toggle');
+            toggle.classList.toggle('active');
+        }
+
+        function openSettings(page) {
+            console.log('Open settings page:', page);
+        }
+
+        function exportData() {
+            alert('✓ 数据已导出\n\n文件已保存到下载文件夹');
+        }
+
+        function importData() {
+            alert('选择要导入的 JSON 文件');
+        }
+
+        function backupData() {
+            alert('✓ 数据已备份\n\n最后备份时间：今天 09:30');
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ 确定要清空所有数据吗？\n\n此操作无法撤销！')) {
+                alert('✓ 所有数据已清空');
+            }
+        }
+    </script>
+</body>
+</html>
+

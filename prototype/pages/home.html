@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 主视图</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .quadrant-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            min-height: 350px;
+        }
+
+        .quadrant-item.urgent-important {
+            border-top: 4px solid #FF3B30;
+        }
+
+        .quadrant-item.not-urgent-important {
+            border-top: 4px solid #FF9500;
+        }
+
+        .quadrant-item.urgent-not-important {
+            border-top: 4px solid #34C759;
+        }
+
+        .quadrant-item.not-urgent-not-important {
+            border-top: 4px solid #A2845E;
+        }
+
+        .task-item {
+            background: #F2F2F7;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            border-left: 3px solid transparent;
+        }
+
+        .task-item:active {
+            background: #E5E5EA;
+            transform: translateX(4px);
+        }
+
+        .task-item.urgent-important {
+            border-left-color: #FF3B30;
+        }
+
+        .task-item.not-urgent-important {
+            border-left-color: #FF9500;
+        }
+
+        .task-item.urgent-not-important {
+            border-left-color: #34C759;
+        }
+
+        .task-item.not-urgent-not-important {
+            border-left-color: #A2845E;
+        }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: #8E8E93;
+        }
+
+        .view-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .view-btn {
+            flex: 1;
+            height: 36px;
+            border: 1px solid #E5E5EA;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            color: #8E8E93;
+        }
+
+        .view-btn.active {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+
+        .view-btn:active {
+            opacity: 0.8;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #F2F2F7;
+            border-radius: 8px;
+            padding: 0 12px;
+            margin-bottom: 16px;
+            height: 36px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: #C7C7CC;
+        }
+
+        .search-bar-icon {
+            color: #8E8E93;
+            font-size: 14px;
+        }
+
+        .quadrant-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .quadrant-label.urgent-important {
+            background: #FF3B30;
+        }
+
+        .quadrant-label.not-urgent-important {
+            background: #FF9500;
+        }
+
+        .quadrant-label.urgent-not-important {
+            background: #34C759;
+        }
+
+        .quadrant-label.not-urgent-not-important {
+            background: #A2845E;
+        }
+
+        .empty-quadrant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #C7C7CC;
+            text-align: center;
+        }
+
+        .empty-quadrant-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .empty-quadrant-text {
+            font-size: 12px;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 300ms ease-in-out;
+            z-index: 50;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <div class="nav-bar-title">四象限任务</div>
+                <div class="nav-bar-right">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 搜索栏 -->
+                <div class="search-bar">
+                    <i class="search-bar-icon fas fa-search"></i>
+                    <input type="text" placeholder="搜索任务...">
+                </div>
+
+                <!-- 视图切换 -->
+                <div class="view-selector">
+                    <button class="view-btn active" onclick="switchView('matrix')">
+                        <i class="fas fa-th"></i> 矩阵
+                    </button>
+                    <button class="view-btn" onclick="switchView('list')">
+                        <i class="fas fa-list"></i> 列表
+                    </button>
+                    <button class="view-btn" onclick="switchView('calendar')">
+                        <i class="fas fa-calendar"></i> 日历
+                    </button>
+                </div>
+
+                <!-- 四象限矩阵 -->
+                <div class="grid grid-cols-2 gap-4 mb-lg">
+                    <!-- 第一象限：重要&紧急 -->
+                    <div class="quadrant-item urgent-important">
+                        <div class="quadrant-label urgent-important">重要 & 紧急</div>
+                        <p style="font-size: 12px; color: #8E8E93; margin-bottom: 12px;">立即处理</p>
+                        
+                        <div class="task-item urgent-important" onclick="openTaskDetail()">
+                            <div class="task-title">完成项目提案</div>
+                            <div class="task-meta">
+                                <i class="fas fa-calendar-alt"></i> 今天
+                            </div>
+                        </div>
+
+                        <div class="empty-quadrant" style="display: none;">
+                            <div class="empty-quadrant-icon">✨</div>
+                            <div class="empty-quadrant-text">暂无任务</div>
+                        </div>
+                    </div>
+
+                    <!-- 第二象限：重要&不紧急 -->
+                    <div class="quadrant-item not-urgent-important">
+                        <div class="quadrant-label not-urgent-important">重要 & 不紧急</div>
+                        <p style="font-size: 12px; color: #8E8E93; margin-bottom: 12px;">计划处理</p>
+                        
+                        <div class="task-item not-urgent-important" onclick="openTaskDetail()">
+                            <div class="task-title">学习ArkTS框架</div>
+                            <div class="task-meta">
+                                <i class="fas fa-calendar-alt"></i> 下周
+                            </div>
+                        </div>
+
+                        <div class="empty-quadrant" style="display: none;">
+                            <div class="empty-quadrant-icon">📚</div>
+                            <div class="empty-quadrant-text">暂无任务</div>
+                        </div>
+                    </div>
+
+                    <!-- 第三象限：不重要&紧急 -->
+                    <div class="quadrant-item urgent-not-important">
+                        <div class="quadrant-label urgent-not-important">不重要 & 紧急</div>
+                        <p style="font-size: 12px; color: #8E8E93; margin-bottom: 12px;">委派处理</p>
+                        
+                        <div class="task-item urgent-not-important" onclick="openTaskDetail()">
+                            <div class="task-title">回复客户邮件</div>
+                            <div class="task-meta">
+                                <i class="fas fa-clock"></i> 1小时
+                            </div>
+                        </div>
+
+                        <div class="empty-quadrant" style="display: none;">
+                            <div class="empty-quadrant-icon">📞</div>
+                            <div class="empty-quadrant-text">暂无任务</div>
+                        </div>
+                    </div>
+
+                    <!-- 第四象限：不重要&不紧急 -->
+                    <div class="quadrant-item not-urgent-not-important">
+                        <div class="quadrant-label not-urgent-not-important">不重要 & 不紧急</div>
+                        <p style="font-size: 12px; color: #8E8E93; margin-bottom: 12px;">休闲娱乐</p>
+                        
+                        <div class="task-item not-urgent-not-important" onclick="openTaskDetail()">
+                            <div class="task-title">整理文件</div>
+                            <div class="task-meta">
+                                <i class="fas fa-calendar-alt"></i> 下周
+                            </div>
+                        </div>
+
+                        <div class="empty-quadrant" style="display: none;">
+                            <div class="empty-quadrant-icon">🎮</div>
+                            <div class="empty-quadrant-text">暂无任务</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-md">
+                        <h3 class="font-semibold">今日统计</h3>
+                        <span class="text-sm text-gray-500">4个任务</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">75%</div>
+                            <div class="text-xs text-gray-500">完成率</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">2h</div>
+                            <div class="text-xs text-gray-500">专注时长</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-orange-600">1</div>
+                            <div class="text-xs text-gray-500">待处理</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 浮动按钮 -->
+            <button class="fab" onclick="openAddTask()">
+                <i class="fas fa-plus"></i>
+            </button>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item active">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item" onclick="navigateTo('calendar')">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item" onclick="navigateTo('stats')">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item" onclick="navigateTo('settings')">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            const buttons = document.querySelectorAll('.view-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.view-btn').classList.add('active');
+            console.log('Switched to view:', view);
+        }
+
+        function openAddTask() {
+            window.location.hash = '#add-task';
+        }
+
+        function openTaskDetail() {
+            window.location.hash = '#task-detail';
+        }
+
+        function navigateTo(page) {
+            window.location.hash = '#' + page;
+        }
+
+        // 初始化
+        window.addEventListener('load', () => {
+            console.log('Home page loaded');
+        });
+    </script>
+</body>
+</html>
+

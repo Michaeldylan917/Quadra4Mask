@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 时间线视图</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .timeline-container {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #E5E5EA;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #E5E5EA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .timeline-dot.active {
+            border-color: #007AFF;
+            background: #007AFF;
+            color: white;
+        }
+
+        .timeline-dot.completed {
+            border-color: #34C759;
+            background: #34C759;
+            color: white;
+        }
+
+        .timeline-dot.urgent-important {
+            border-color: #FF3B30;
+        }
+
+        .timeline-dot.not-urgent-important {
+            border-color: #FF9500;
+        }
+
+        .timeline-dot.urgent-not-important {
+            border-color: #34C759;
+        }
+
+        .timeline-dot.not-urgent-not-important {
+            border-color: #A2845E;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .timeline-content:active {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #8E8E93;
+            margin-bottom: 8px;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #8E8E93;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .timeline-badge.urgent-important {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        .timeline-badge.not-urgent-important {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .timeline-badge.urgent-not-important {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .timeline-badge.not-urgent-not-important {
+            background: rgba(162, 132, 94, 0.1);
+            color: #A2845E;
+        }
+
+        .timeline-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            margin: 24px 0 16px 0;
+            padding-left: 40px;
+        }
+
+        .timeline-section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #007AFF;
+            border-radius: 2px;
+            margin-right: 12px;
+            margin-left: -16px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter-tab {
+            flex: 0 0 auto;
+            height: 32px;
+            padding: 0 12px;
+            border: 1px solid #E5E5EA;
+            background: white;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            color: #8E8E93;
+        }
+
+        .filter-tab.active {
+            background: #007AFF;
+            color: white;
+            border-color: #007AFF;
+        }
+
+        .filter-tab:active {
+            opacity: 0.8;
+        }
+
+        .empty-timeline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+            color: #8E8E93;
+        }
+
+        .empty-timeline-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-timeline-text {
+            font-size: 14px;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .progress-bar-mini {
+            flex: 1;
+            height: 4px;
+            background: #E5E5EA;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-mini-fill {
+            height: 100%;
+            background: #007AFF;
+            width: 75%;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: #8E8E93;
+            min-width: 30px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">时间线视图</div>
+                <div class="nav-bar-right">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 筛选标签 -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterTimeline('all')">全部</button>
+                    <button class="filter-tab" onclick="filterTimeline('today')">今天</button>
+                    <button class="filter-tab" onclick="filterTimeline('week')">本周</button>
+                    <button class="filter-tab" onclick="filterTimeline('month')">本月</button>
+                    <button class="filter-tab" onclick="filterTimeline('overdue')">逾期</button>
+                </div>
+
+                <!-- 时间线 -->
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+
+                    <!-- 今天 -->
+                    <div class="timeline-section-title">今天</div>
+
+                    <!-- 任务1 -->
+                    <div class="timeline-item" onclick="openTaskDetail()">
+                        <div class="timeline-dot active">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> 09:00 - 11:00
+                            </div>
+                            <div class="timeline-title">完成项目提案</div>
+                            <div class="timeline-desc">完成Q4季度项目提案文档</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge urgent-important">重要&紧急</span>
+                                <span>120分钟</span>
+                            </div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-bar-mini-fill"></div>
+                                </div>
+                                <span class="progress-text">75%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 任务2 -->
+                    <div class="timeline-item" onclick="openTaskDetail()">
+                        <div class="timeline-dot urgent-not-important">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> 14:00 - 14:30
+                            </div>
+                            <div class="timeline-title">回复客户邮件</div>
+                            <div class="timeline-desc">回复待处理的客户邮件</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge urgent-not-important">不重要&紧急</span>
+                                <span>30分钟</span>
+                            </div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-bar-mini-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 明天 -->
+                    <div class="timeline-section-title">明天</div>
+
+                    <!-- 任务3 -->
+                    <div class="timeline-item" onclick="openTaskDetail()">
+                        <div class="timeline-dot not-urgent-important">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> 10:00 - 12:30
+                            </div>
+                            <div class="timeline-title">学习ArkTS框架</div>
+                            <div class="timeline-desc">深入学习HarmonyOS ArkTS开发</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge not-urgent-important">重要&不紧急</span>
+                                <span>180分钟</span>
+                            </div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-bar-mini-fill" style="width: 40%;"></div>
+                                </div>
+                                <span class="progress-text">40%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 下周 -->
+                    <div class="timeline-section-title">下周</div>
+
+                    <!-- 任务4 -->
+                    <div class="timeline-item" onclick="openTaskDetail()">
+                        <div class="timeline-dot not-urgent-not-important">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">
+                                <i class="fas fa-calendar-alt"></i> 2025-12-10
+                            </div>
+                            <div class="timeline-title">整理文件</div>
+                            <div class="timeline-desc">整理桌面和文件夹</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge not-urgent-not-important">不重要&不紧急</span>
+                                <span>60分钟</span>
+                            </div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-bar-mini-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 任务5 -->
+                    <div class="timeline-item" onclick="openTaskDetail()">
+                        <div class="timeline-dot not-urgent-important">
+                            <i class="fas fa-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">
+                                <i class="fas fa-calendar-alt"></i> 2025-12-12
+                            </div>
+                            <div class="timeline-title">阅读技术文档</div>
+                            <div class="timeline-desc">阅读最新的HarmonyOS技术文档</div>
+                            <div class="timeline-meta">
+                                <span class="timeline-badge not-urgent-important">重要&不紧急</span>
+                                <span>90分钟</span>
+                            </div>
+                            <div class="progress-indicator">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-bar-mini-fill" style="width: 30%;"></div>
+                                </div>
+                                <span class="progress-text">30%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item active">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterTimeline(filter) {
+            const buttons = document.querySelectorAll('.filter-tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            console.log('Filter timeline by:', filter);
+        }
+
+        function openTaskDetail() {
+            window.location.hash = '#task-detail';
+        }
+    </script>
+</body>
+</html>
+

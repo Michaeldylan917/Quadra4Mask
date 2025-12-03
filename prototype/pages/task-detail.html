@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuadTask - 任务详情</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <style>
+        .detail-header {
+            background: linear-gradient(135deg, #FF3B30 0%, #FF6B5B 100%);
+            color: white;
+            padding: 20px 16px;
+            margin: -12px -12px 0 -12px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .detail-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-section-title i {
+            color: #007AFF;
+        }
+
+        .detail-card {
+            background: #F2F2F7;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #E5E5EA;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #8E8E93;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .detail-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .detail-badge.urgent-important {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        .detail-badge.not-urgent-important {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .detail-badge.urgent-not-important {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .detail-badge.not-urgent-not-important {
+            background: rgba(162, 132, 94, 0.1);
+            color: #A2845E;
+        }
+
+        .detail-badge.completed {
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+
+        .subtask-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .subtask-item:active {
+            background: #F2F2F7;
+        }
+
+        .subtask-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E5EA;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+        }
+
+        .subtask-checkbox.checked {
+            background: #34C759;
+            border-color: #34C759;
+            color: white;
+        }
+
+        .subtask-text {
+            flex: 1;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .subtask-text.completed {
+            text-decoration: line-through;
+            color: #8E8E93;
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #007AFF;
+            color: white;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn-primary {
+            background: #007AFF;
+            color: white;
+        }
+
+        .action-btn-primary:active {
+            background: #0051D5;
+        }
+
+        .action-btn-secondary {
+            background: #F2F2F7;
+            color: #000;
+        }
+
+        .action-btn-secondary:active {
+            background: #E5E5EA;
+        }
+
+        .action-btn-danger {
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+        }
+
+        .action-btn-danger:active {
+            background: rgba(255, 59, 48, 0.2);
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E5EA;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007AFF 0%, #0051D5 100%);
+            width: 75%;
+            transition: width 300ms ease-in-out;
+        }
+
+        .description-box {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: #3C3C43;
+            font-size: 14px;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2F2F7;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .history-icon.created {
+            background: #E8F4FF;
+            color: #007AFF;
+        }
+
+        .history-icon.updated {
+            background: rgba(255, 149, 0, 0.1);
+            color: #FF9500;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-action {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: #8E8E93;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="iphone-screen">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-bar-left">
+                    <span>9:41</span>
+                </div>
+                <div class="status-bar-center"></div>
+                <div class="status-bar-right">
+                    <i class="fas fa-signal"></i>
+                    <i class="fas fa-wifi"></i>
+                    <i class="fas fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+                <div class="nav-bar-left" onclick="history.back()">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-bar-title">任务详情</div>
+                <div class="nav-bar-right">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="page-content">
+                <!-- 详情头部 -->
+                <div class="detail-header">
+                    <div class="detail-title">完成项目提案</div>
+                    <div class="detail-meta">
+                        <span><i class="fas fa-calendar-alt"></i> 今天</span>
+                        <span><i class="fas fa-clock"></i> 120分钟</span>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button class="action-btn action-btn-primary" onclick="startFocus()">
+                        <i class="fas fa-play"></i> 开始专注
+                    </button>
+                    <button class="action-btn action-btn-secondary" onclick="editTask()">
+                        <i class="fas fa-edit"></i> 编辑
+                    </button>
+                </div>
+
+                <!-- 任务描述 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-align-left"></i> 描述
+                    </div>
+                    <div class="description-box">
+                        完成Q4季度项目提案文档，包括项目背景、目标、时间表和预算估算。
+                    </div>
+                </div>
+
+                <!-- 进度 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-chart-pie"></i> 进度
+                    </div>
+                    <div class="progress-section">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-semibold">完成度</span>
+                            <span class="text-sm font-semibold text-blue-600">75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 子任务 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-tasks"></i> 子任务 (3/4)
+                    </div>
+                    <div class="subtask-list">
+                        <div class="subtask-item" onclick="toggleSubtask(this)">
+                            <div class="subtask-checkbox checked">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="subtask-text completed">收集项目需求</div>
+                        </div>
+                        <div class="subtask-item" onclick="toggleSubtask(this)">
+                            <div class="subtask-checkbox checked">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="subtask-text completed">制定项目计划</div>
+                        </div>
+                        <div class="subtask-item" onclick="toggleSubtask(this)">
+                            <div class="subtask-checkbox checked">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="subtask-text completed">评估资源需求</div>
+                        </div>
+                        <div class="subtask-item" onclick="toggleSubtask(this)">
+                            <div class="subtask-checkbox">
+                            </div>
+                            <div class="subtask-text">编写最终提案</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 任务信息 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-info-circle"></i> 任务信息
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-row">
+                            <span class="detail-label">象限</span>
+                            <span class="detail-badge urgent-important">重要&紧急</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">优先级</span>
+                            <span class="detail-value">P1 - 最高</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">状态</span>
+                            <span class="detail-badge">进行中</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">截止日期</span>
+                            <span class="detail-value">2025-12-03</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">预计时长</span>
+                            <span class="detail-value">120分钟</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">已用时长</span>
+                            <span class="detail-value">90分钟</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-tags"></i> 标签
+                    </div>
+                    <div class="tag-list">
+                        <span class="tag-badge">工作</span>
+                        <span class="tag-badge">紧急</span>
+                        <span class="tag-badge">项目</span>
+                    </div>
+                </div>
+
+                <!-- 操作历史 -->
+                <div class="detail-section">
+                    <div class="detail-section-title">
+                        <i class="fas fa-history"></i> 操作历史
+                    </div>
+                    <div class="detail-card">
+                        <div class="history-item">
+                            <div class="history-icon created">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-action">任务已创建</div>
+                                <div class="history-time">2025-12-02 14:30</div>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-icon updated">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-action">任务已更新</div>
+                                <div class="history-time">2025-12-02 15:45</div>
+                            </div>
+                        </div>
+                        <div class="history-item">
+                            <div class="history-icon created">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="history-content">
+                                <div class="history-action">开始专注工作</div>
+                                <div class="history-time">2025-12-03 09:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 删除按钮 -->
+                <button class="action-btn action-btn-danger w-full" onclick="deleteTask()" style="margin-bottom: 20px;">
+                    <i class="fas fa-trash"></i> 删除任务
+                </button>
+            </div>
+
+            <!-- 底部 TabBar -->
+            <div class="tab-bar">
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-home"></i></div>
+                    <div class="tab-bar-label">首页</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-calendar"></i></div>
+                    <div class="tab-bar-label">日历</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="tab-bar-label">统计</div>
+                </div>
+                <div class="tab-bar-item">
+                    <div class="tab-bar-icon"><i class="fas fa-cog"></i></div>
+                    <div class="tab-bar-label">设置</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubtask(element) {
+            const checkbox = element.querySelector('.subtask-checkbox');
+            const text = element.querySelector('.subtask-text');
+            
+            checkbox.classList.toggle('checked');
+            text.classList.toggle('completed');
+            
+            if (checkbox.classList.contains('checked')) {
+                checkbox.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                checkbox.innerHTML = '';
+            }
+        }
+
+        function startFocus() {
+            window.location.hash = '#focus';
+        }
+
+        function editTask() {
+            console.log('Edit task');
+        }
+
+        function deleteTask() {
+            if (confirm('确定要删除此任务吗？')) {
+                console.log('Task deleted');
+                history.back();
+            }
+        }
+    </script>
+</body>
+</html>
+
