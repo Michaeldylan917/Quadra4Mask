@@ -95,63 +95,9 @@
 
 ## 🎨 高保真UI设计规范
 
-### 设计系统
+<img width="2173" height="1288" alt="image" src="https://github.com/user-attachments/assets/1325e17f-3379-46ab-a35c-f42b4bac0466" />
+<img width="2392" height="1267" alt="image" src="https://github.com/user-attachments/assets/c2b2ad7e-5ae2-40f1-bdd7-f3faa5806f78" />
 
-#### 色彩系统
-- **主色** - #007AFF (iOS Blue)
-- **重要&紧急** - #FF3B30 (Red)
-- **重要&不紧急** - #FF9500 (Orange)
-- **不重要&紧急** - #34C759 (Green)
-- **不重要&不紧急** - #A2845E (Gray)
-- **背景** - #F2F2F7 (Light Gray)
-- **卡片** - #FFFFFF (White)
-- **文字主** - #000000 (Black)
-- **文字副** - #8E8E93 (Gray)
-
-#### 排版系统
-- **标题** - SF Pro Display, 28px, Bold
-- **副标题** - SF Pro Display, 20px, Semibold
-- **正文** - SF Pro Text, 16px, Regular
-- **辅助文本** - SF Pro Text, 14px, Regular
-- **标签** - SF Pro Text, 12px, Regular
-
-#### 间距系统
-- **超小** - 4px
-- **小** - 8px
-- **中** - 16px
-- **大** - 24px
-- **超大** - 32px
-
-#### 圆角系统
-- **按钮** - 10px
-- **卡片** - 12px
-- **输入框** - 8px
-- **App容器** - 40px (顶部)
-
-#### 阴影系统
-- **卡片阴影** - 0 2px 8px rgba(0,0,0,0.1)
-- **浮层阴影** - 0 8px 24px rgba(0,0,0,0.15)
-
-### 组件库
-
-#### 按钮
-- **主按钮** - 蓝色背景，白色文字，高度44px
-- **次按钮** - 灰色背景，黑色文字，高度44px
-- **文字按钮** - 蓝色文字，无背景
-
-#### 输入框
-- **文本输入** - 灰色背景，圆角8px，高度44px
-- **多行输入** - 灰色背景，圆角8px，最小高度100px
-
-#### 卡片
-- **任务卡** - 白色背景，圆角12px，左边框色标识象限
-- **统计卡** - 白色背景，圆角12px，包含图表
-
-#### 标签
-- **象限标签** - 圆形背景，白色文字，直径24px
-- **优先级标签** - 矩形背景，圆角6px，高度20px
-
----
 
 ## 💻 HTML原型实现
 
